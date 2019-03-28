@@ -10,7 +10,7 @@ def primesUpTo(n):
     return []
 
 def findMSmoothSquares(n, m, base):
-    x = floor(n) + 1
+    x = floor(sqrt(n)) + 1
     smoothSquares = {}
     while x < n and len(smoothSquares) < m:
          # TODO - See if x^2 is smooth, if so store list of exponents and add to smoothSquares
@@ -38,6 +38,7 @@ def factor(n, x, y):
 def main():
     if len(sys.argv) < 2:
         print("You need to input a number to factor!")
+        return 1
 
     n = sys.argv[1]
     # TODO - actually do things :)
