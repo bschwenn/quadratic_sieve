@@ -7,7 +7,8 @@ def selectFactorBaseLimit(n):
 
 def primesUpTo(n):
     #TODO - implement sieve of eratosthenes
-    return []def sieve_era(B): # returns primes <= b
+    return []
+def sieve_era(B): # returns primes <= b
     l = [True] * (B+1) 
     l[0] = l[1] = False
     for i in range(2,int(B**0.5)+1):
