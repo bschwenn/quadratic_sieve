@@ -172,6 +172,9 @@ def factor(n, x, y):
     return [0, 0]
 
 
+def find_bound(n):
+    return int(math.exp((2**(-0.5)*(math.log(2*n)*math.log(math.log(2*n)))**0.5)))
+
 def main():
     if len(sys.argv) < 2:
         print("You need to input a number to factor!")
