@@ -172,6 +172,7 @@ def roots_congruent_mod_n(n, square, p_set, exponent_vector):
 def gcd(a, b):
     return gcd(b, a % b) if a % b else b
 
+
 def miller_rabin(n):
     m = n-1
     k = 0

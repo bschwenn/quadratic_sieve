@@ -60,7 +60,7 @@ def get_solution_rows(mat, marks):
             solutions.append(soln)
     ret = []
     for soln in solutions:
-        row = np.zeros(mat.shape[0])
+        row = np.zeros(mat.shape[1])
         for i in soln:
             row[i] = 1
         ret.append(row)
