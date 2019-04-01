@@ -43,6 +43,12 @@ def eliminate(mat):
 
 
 def get_solution_rows(mat, marks):
+    """
+
+    :param mat:
+    :param marks:
+    :return: left nullspace of mat mod 2
+    """
     solutions = []
     for index, mark in enumerate(marks):
         if not mark:  # found a row s.t. mark is False, i.e. a dependent row.
@@ -62,8 +68,6 @@ def get_solution_rows(mat, marks):
         return np.array(ret)
     else:
         return []
-
-# def aggregate_solutions(mat, solution_indices)
 
 def find_dependencies(mat):
     """
