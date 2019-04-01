@@ -46,11 +46,14 @@ def get_sol(x,n,p): #gets solutions to x^2-n = 0 mod p
 
 #examine numbers x^2-n for B-Smooth values, x runs integers from ceil(sqrt(n))
 #returns tuple of integer, exponent vector if B-smooth in sequence x^2-n, running from x_start to top_bound
+#examine numbers x^2-n for B-Smooth values, x runs integers from ceil(sqrt(n))
+#returns tuple of integer, exponent vector if B-smooth in sequence x^2-n, running from x_start to top_bound
 def sieve_quad_poly(n,B): #n should be odd
     
     x_start = int(math.ceil(n**0.5)) #bounds of sieve
     top_bound = 2 * x_start #bounds of sieve
-    
+    print(x_start)
+    print(top_bound)
     p_set = sieve_era(B)
     expfac=[ [0]*len(p_set) for i in range(x_start, top_bound)] #exponent vector 
     
@@ -62,32 +65,36 @@ def sieve_quad_poly(n,B): #n should be odd
 
         if (p == 2): #solutions to x^2-n = 0 mod 2: if n is even, x = 0 mod 2, if n is odd, x = 1 mod 2
             index = 0
-            for j in range(1, top_bound, 2):
-                if x_start<=j<top_bound:
-                    num = j-x_start
-                    while(l[j-x_start] % 2 == 0):
-                        expfac[num][index]+=1
-                        l[j-x_start] /= 2
-        elif len(sols)==1:
+            for j in range(1+2*math.ceil((x_start-1)/2), top_bound, 2):
+                num = j-x_start
+                while(l[j-x_start] % 2 == 0):
+                    expfac[num][index]+=1
+                    l[j-x_start] /= 2
+        elif len(sols)==1: #p | n
             return p
-        elif len(sols)==2:
+        elif len(sols)==2: #two solutions, sieve
             index = p_set.index(p)
-            for j in range(sols[0],top_bound,p): 
-                if x_start<=j<top_bound:
-                    num = j-x_start
-                    while (l[j-x_start] % p == 0):
-                        l[j-x_start] /= p
-                        expfac[num][index] += 1
-            for j in range(sols[1],top_bound,p):
-                if x_start<=j<top_bound:
-                    num = j-x_start
-                    while(l[j-x_start] % p == 0):
-                        l[j-x_start] /= p
-                        expfac[num][index] += 1
-                    
 
+            for j in range(sols[0]+p*math.ceil((x_start-sols[0])/p),top_bound,p): 
+                num = j-x_start
+                while (l[j-x_start] % p == 0):
+                    l[j-x_start] /= p
+                    expfac[num][index] += 1
+            for j in range(sols[1]+p*math.ceil((x_start-sols[1])/p),top_bound,p):
+                num = j-x_start
+                while(l[j-x_start] % p == 0):
+                    l[j-x_start] /= p
+                    expfac[num][index] += 1
+                    
     return [(orig[i],expfac[i]) for i,j in enumerate(l) if j == 1]
-                
+
+#testing with n
+n = 1127239
+B = int(math.exp((2**(-0.5)*(math.log(2*n)*math.log(math.log(2*n)))**0.5)))
+print(B)
+print(pi(B))
+
+sieve_quad_poly(n,B)
 
 def exp(n,B): #return exponent vector for n, w/ primes up to B through trial division
     p_set = sieve_era(B)
