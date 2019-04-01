@@ -96,6 +96,69 @@ print(pi(B))
 
 sieve_quad_poly(n,B)
 
+def sieve_quad_poly_log(n,B): #n should be odd
+    
+    x_start = int(math.ceil(n**0.5)) #bounds of sieve
+#    top_bound = math.ceil(1.005 * x_start) #bounds of sieve
+    top_bound = int(math.ceil(n**0.5))+2*B
+
+    p_set = sieve_era(B)
+    orig = [i*i-n for i in range(x_start, top_bound)] #preserved list
+    l = [math.log(i*i-n) for i in range(x_start,top_bound)] #list of all the corresponding x^2-n that will be modified
+    
+    b_smooth_list = []
+    for p in p_set:
+        print(p)
+        sols = get_sol(n,p) #solutions x for x^2-n=0 mod p
+        
+        if (p == 2): #solutions to x^2-n = 0 mod 2: if n is even, x = 0 mod 2, if n is odd, x = 1 mod 2
+            index = 0
+            for j in range(1+2*math.ceil((x_start-1)/2), top_bound, 2):
+                num = j-x_start
+                k = 1
+                
+                while(orig[j-x_start] % 2**k == 0):
+                    l[j-x_start] -= math.log(2)
+                    k += 1
+                    
+                if (l[j-x_start]<0.1):
+                    b_smooth_list.append(orig[j-x_start])
+                    print(orig[j-x_start])
+                if len(b_smooth_list)>pi(B):
+                    return b_smooth_list
+        elif len(sols)==1: #p | n
+            return p
+        elif len(sols)==2: #two solutions, sieve
+            
+            index = p_set.index(p)
+
+            for j in range(sols[0]+p*math.ceil((x_start-sols[0])/p),top_bound,p): 
+                num = j-x_start
+                k = 1
+                while (orig[j-x_start] % p**k == 0):
+                    l[j-x_start] -= math.log(p)
+                    k += 1
+                if (l[j-x_start] < 0.1):
+                    b_smooth_list.append(orig[j-x_start])
+                    print(orig[j-x_start])
+                if len(b_smooth_list) > pi(B):
+                    return b_smooth_list
+
+            for j in range(sols[1]+p*math.ceil((x_start-sols[1])/p),top_bound,p):
+                num = j-x_start
+                k = 1
+                while(orig[j-x_start] % p**k == 0):
+                    l[j-x_start] -= math.log(p)
+                    k += 1
+                if (l[j-x_start] < 0.1):
+                    b_smooth_list.append(orig[j-x_start])
+                    print(orig[j-x_start])
+                if len(b_smooth_list)>pi(B):
+                    return b_smooth_list
+                    
+    return b_smooth_list
+
+
 def exp(n,B): #return exponent vector for n, w/ primes up to B through trial division
     p_set = sieve_era(B)
     ans = []
