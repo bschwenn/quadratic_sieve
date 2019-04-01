@@ -1,5 +1,5 @@
-from sieve.py import *
-from matrix_reducer.py import *
+from sieve import *
+from matrix_reducer import *
 
 def factor(n):
     B = find_bound(n)
