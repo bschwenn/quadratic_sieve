@@ -34,7 +34,7 @@ def pi(B):
     return len(sieve_era(B))-1
 
 
-def get_sol(x,n,p): #gets solutions to x^2-n = 0 mod p
+def get_sol(n,p): #gets solutions to x^2-n = 0 mod p
     sol = []
     for i in range(p):
         if (i*i-n % p == 0):
@@ -86,69 +86,72 @@ def sieve_quad_poly(n,B): #n should be odd
 
     return [(orig[i],expfac[i]) for i,j in enumerate(l) if j == 1]
 
-def sieve_quad_poly_log(n,B): #n should be odd
+def sieve_quad_poly_log(n,p_set, B): #n should be odd
 
     x_start = int(math.ceil(n**0.5))  # bounds of sieve
 #    top_bound = math.ceil(1.005 * x_start)  # bounds of sieve
     top_bound = int(math.ceil(n**0.5))+2*B
 
-    p_set = sieve_era(B)
+    # p_set = sieve_era(B)
     orig = [i*i-n for i in range(x_start, top_bound)]  # preserved list
     l = [math.log(i*i-n) for i in range(x_start,top_bound)]  # list of all the corresponding x^2-n that will be modified
 
-    b_smooth_list = []
+#    b_smooth_list = []
     for p in p_set:
         print(p)
         sols = get_sol(n,p) # solutions x for x^2-n=0 mod p
 
         if p == 2: # solutions to x^2-n = 0 mod 2: if n is even, x = 0 mod 2, if n is odd, x = 1 mod 2
             index = 0
-            for j in range(1+2*math.ceil((x_start-1)/2), top_bound, 2):
-                num = j-x_start
+            for x in range(1+2*math.ceil((x_start-1)/2), top_bound, 2):
                 k = 1
 
-                while orig[j-x_start] % 2**k == 0:
-                    l[j-x_start] -= math.log(2)
+                while orig[x-x_start] % 2**k == 0:
+                    l[x-x_start] -= math.log(2)
                     k += 1
 
-                if (l[j-x_start]<0.1):
-                    b_smooth_list.append(orig[j-x_start])
-                    print(orig[j-x_start])
-                if len(b_smooth_list)>pi(B):
-                    return b_smooth_list
+                if (l[x-x_start]<0.1):
+                    # b_smooth_list.append(orig[j-x_start])
+                    yield x
+                    # print(orig[j-x_start])
+                #if len(b_smooth_list)>pi(B):
+                    # return b_smooth_list
+
         elif len(sols) == 1:  # p | n
-            return p
+            yield p
         elif len(sols) == 2:  # two solutions, sieve
 
-            for j in range(sols[0]+p*math.ceil((x_start-sols[0])/p), top_bound, p):
-                num = j-x_start
+            for x in range(sols[0]+p*math.ceil((x_start-sols[0])/p), top_bound, p):
+                num = x-x_start
                 k = 1
-                while orig[j-x_start] % p**k == 0:
+                while orig[x-x_start] % p**k == 0:
                     l[num] -= math.log(p)
                     k += 1
                 if l[num] < 0.1:
-                    b_smooth_list.append(orig[num])
-                    print(orig[num])
-                if len(b_smooth_list) > pi(B):
-                    return b_smooth_list
+                    #b_smooth_list.append(orig[num])
+                    yield x
+                    #print(orig[num])
+                #if len(b_smooth_list) > pi(B):
+                #    return b_smooth_list
 
-            for j in range(sols[1]+p*math.ceil((x_start-sols[1])/p),top_bound,p):
-                num = j-x_start
+            for x in range(sols[1]+p*math.ceil((x_start-sols[1])/p),top_bound,p):
+                num = x-x_start
                 k = 1
                 while orig[num] % p**k == 0:
                     l[num] -= math.log(p)
                     k += 1
                 if l[num] < 0.1:
-                    b_smooth_list.append(orig[num])
+                    #b_smooth_list.append(orig[num])
+                    yield x
                     print(orig[num])
-                if len(b_smooth_list) > pi(B):
-                    return b_smooth_list
+                #if len(b_smooth_list) > pi(B):
+                #    return b_smooth_list
 
-    return b_smooth_list
+    # return b_smooth_list
 
 
-def factor_in_base(n,B): # return exponent vector for n, w/ primes up to B through trial division
-    p_set = sieve_era(B)
+def factor_in_base(n,p_set): # return exponent vector for n, w/ primes up to B through trial division
+    # p_set = sieve_era(B)
     ans = []
     for i in p_set:
         count = 0
@@ -175,24 +178,11 @@ def factor(n, x, y):
 def find_bound(n):
     return int(math.exp((2**(-0.5)*(math.log(2*n)*math.log(math.log(2*n)))**0.5)))
 
-def main():
-    if len(sys.argv) < 2:
-        print("You need to input a number to factor!")
-        return 1
-
-    n = sys.argv[1]
-    # TODO - actually do things :)
-    return 0
-
-# Uncomment to actually use main lol
-# if __name__ == "__main__":
-#    main()
-
 
 # testing with n
-n = 1127239
-B = int(math.exp((2**(-0.5)*(math.log(2*n)*math.log(math.log(2*n)))**0.5)))
-print(B)
-print(pi(B))
+#n = 1127239
+#B = int(math.exp((2**(-0.5)*(math.log(2*n)*math.log(math.log(2*n)))**0.5)))
+#print(B)
+#print(pi(B))
 
-sieve_quad_poly(n, B)
+#sieve_quad_poly(n, B)

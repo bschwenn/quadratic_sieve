@@ -9,7 +9,12 @@ def factor(n):
     factors = set()
 
     for square in sieve_quad_poly_log(n, factor_base, B):
+        if (n % square == 0):
+            factors.add(square)
+            continue
+        print("Square:" + str(square))
         smooth_squares_factor_map[square] = factor_in_base(square, factor_base)
+        print(str(square) + " " + str(smooth_squares_factor_map[square]))
 
         if len(smooth_squares_factor_map) > pi_B:
             left_nullspace_mat = find_dependencies([v for k,v in smooth_squares_factor_map])
@@ -19,7 +24,7 @@ def factor(n):
                 return factors
 
             # might need to remove stuff from the map instead of just adding more
-
+    return factors
 
 def check_for_factors(n, smooth_squares_factor_map, left_nullspace_mat, factor_base):
     roots_of_squares = smooth_squares_factor_map.keys()
@@ -49,3 +54,16 @@ def check_for_factors(n, smooth_squares_factor_map, left_nullspace_mat, factor_b
 def is_fully_factored(n, factors):
     prod_factors = reduce((lambda x, y: x * y), factor)
     return n == factors
+
+def main():
+    if len(sys.argv) < 2:
+        print("You need to input a number to factor!")
+        return 1
+
+    n = int(sys.argv[1])
+    print(factor(n))
+    return 0
+
+if __name__ == "__main__":
+   main()
+
