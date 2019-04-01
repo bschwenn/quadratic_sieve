@@ -41,6 +41,19 @@ def eliminate(mat):
     return mat, marks
 
 
+def get_solution_rows(mat, marks):
+    solutions = []
+    for index, mark in enumerate(marks):
+        if not mark:  # found a row s.t. mark is False, i.e. a dependent row.
+            soln = []
+            for i, num in enumerate(mat[index]):
+                if num == 1:
+                    soln.append(i)
+            soln.append(index)
+            solutions.append(soln)
+    return solutions
+
+
 def find_dependencies(mat):
     """
     :param mat: 2d np array where each row is the exponent vector of the prime factorization.
@@ -48,4 +61,5 @@ def find_dependencies(mat):
     """
     mat = mod_2_representation(mat).transpose()
     mat, marks = eliminate(mat)
+    solutions = get_solution_rows(mat, marks)
 
