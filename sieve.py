@@ -173,6 +173,27 @@ def gcd(a, b):
     return gcd(b, a % b) if a % b else b
 
 
+def miller_rabin(n):
+    m = n-1
+    k = 0
+    while m % 2 == 0:
+        k += 1
+        m = m / 2
+    a = 2
+    a = (a ** m) % n
+    if a == 1 or a == n-1:
+        return True
+    while k > 1:
+        a = (a ** 2) % n
+        if a == 1:
+            return False
+        if a == n - 1:
+            return True
+    if a == n - 1:
+        return True
+    return False
+
+
 def factor(n, x, y):
     # TODO - return gcd(x-y, n) and n/gcd(x-y,n)
     return [0, 0]
