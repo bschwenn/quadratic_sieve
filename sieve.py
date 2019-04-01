@@ -1,5 +1,6 @@
-from math import *
+import math
 import sys
+
 
 def sieve_era(B): # returns primes <= b
     l = [True] * (B+1)
@@ -27,8 +28,11 @@ def sieve_quad(n,B): #return B-smooth numbers up to n, with the exponent factori
 
     return [(i,expfac[i]) for i,j in enumerate(l) if j==1]
 '''
+
+
 def pi(B):
     return len(sieve_era(B))-1
+
 
 def get_sol(x,n,p): #gets solutions to x^2-n = 0 mod p
     sol = []
@@ -37,11 +41,12 @@ def get_sol(x,n,p): #gets solutions to x^2-n = 0 mod p
             sol.append(i)
     return sol
 
-#examine numbers x^2-n for B-Smooth values, x runs integers from ceil(sqrt(n))
-#returns tuple of integer, exponent vector if B-smooth in sequence x^2-n, running from x_start to top_bound
-#examine numbers x^2-n for B-Smooth values, x runs integers from ceil(sqrt(n))
-#returns tuple of integer, exponent vector if B-smooth in sequence x^2-n, running from x_start to top_bound
+
 def sieve_quad_poly(n,B): #n should be odd
+    """examine numbers x^2-n for B-Smooth values, x runs integers from ceil(sqrt(n))
+    returns tuple of integer, exponent vector if B-smooth in sequence x^2-n, running from x_start to top_bound
+    examine numbers x^2-n for B-Smooth values, x runs integers from ceil(sqrt(n))
+    returns tuple of integer, exponent vector if B-smooth in sequence x^2-n, running from x_start to top_bound"""
 
     x_start = int(math.ceil(n**0.5)) #bounds of sieve
     top_bound = 2 * x_start #bounds of sieve
@@ -83,26 +88,26 @@ def sieve_quad_poly(n,B): #n should be odd
 
 def sieve_quad_poly_log(n,B): #n should be odd
 
-    x_start = int(math.ceil(n**0.5)) #bounds of sieve
-#    top_bound = math.ceil(1.005 * x_start) #bounds of sieve
+    x_start = int(math.ceil(n**0.5))  # bounds of sieve
+#    top_bound = math.ceil(1.005 * x_start)  # bounds of sieve
     top_bound = int(math.ceil(n**0.5))+2*B
 
     p_set = sieve_era(B)
-    orig = [i*i-n for i in range(x_start, top_bound)] #preserved list
-    l = [math.log(i*i-n) for i in range(x_start,top_bound)] #list of all the corresponding x^2-n that will be modified
+    orig = [i*i-n for i in range(x_start, top_bound)]  # preserved list
+    l = [math.log(i*i-n) for i in range(x_start,top_bound)]  # list of all the corresponding x^2-n that will be modified
 
     b_smooth_list = []
     for p in p_set:
         print(p)
-        sols = get_sol(n,p) #solutions x for x^2-n=0 mod p
+        sols = get_sol(n,p) # solutions x for x^2-n=0 mod p
 
-        if (p == 2): #solutions to x^2-n = 0 mod 2: if n is even, x = 0 mod 2, if n is odd, x = 1 mod 2
+        if p == 2: # solutions to x^2-n = 0 mod 2: if n is even, x = 0 mod 2, if n is odd, x = 1 mod 2
             index = 0
             for j in range(1+2*math.ceil((x_start-1)/2), top_bound, 2):
                 num = j-x_start
                 k = 1
 
-                while(orig[j-x_start] % 2**k == 0):
+                while orig[j-x_start] % 2**k == 0:
                     l[j-x_start] -= math.log(2)
                     k += 1
 
@@ -111,57 +116,61 @@ def sieve_quad_poly_log(n,B): #n should be odd
                     print(orig[j-x_start])
                 if len(b_smooth_list)>pi(B):
                     return b_smooth_list
-        elif len(sols)==1: #p | n
+        elif len(sols) == 1:  # p | n
             return p
-        elif len(sols)==2: #two solutions, sieve
+        elif len(sols) == 2:  # two solutions, sieve
 
-            index = p_set.index(p)
-
-            for j in range(sols[0]+p*math.ceil((x_start-sols[0])/p),top_bound,p):
+            for j in range(sols[0]+p*math.ceil((x_start-sols[0])/p), top_bound, p):
                 num = j-x_start
                 k = 1
-                while (orig[j-x_start] % p**k == 0):
-                    l[j-x_start] -= math.log(p)
+                while orig[j-x_start] % p**k == 0:
+                    l[num] -= math.log(p)
                     k += 1
-                if (l[j-x_start] < 0.1):
-                    b_smooth_list.append(orig[j-x_start])
-                    print(orig[j-x_start])
+                if l[num] < 0.1:
+                    b_smooth_list.append(orig[num])
+                    print(orig[num])
                 if len(b_smooth_list) > pi(B):
                     return b_smooth_list
 
             for j in range(sols[1]+p*math.ceil((x_start-sols[1])/p),top_bound,p):
                 num = j-x_start
                 k = 1
-                while(orig[j-x_start] % p**k == 0):
-                    l[j-x_start] -= math.log(p)
+                while orig[num] % p**k == 0:
+                    l[num] -= math.log(p)
                     k += 1
-                if (l[j-x_start] < 0.1):
-                    b_smooth_list.append(orig[j-x_start])
-                    print(orig[j-x_start])
-                if len(b_smooth_list)>pi(B):
+                if l[num] < 0.1:
+                    b_smooth_list.append(orig[num])
+                    print(orig[num])
+                if len(b_smooth_list) > pi(B):
                     return b_smooth_list
 
     return b_smooth_list
 
-def factor_in_base(n,B): #return exponent vector for n, w/ primes up to B through trial division
+
+def factor_in_base(n,B): # return exponent vector for n, w/ primes up to B through trial division
     p_set = sieve_era(B)
     ans = []
     for i in p_set:
         count = 0
-        while (n % i == 0):
+        while n % i == 0:
             n /= i
             count += 1
         ans.append(count)
     return ans
 
-def roots_congruent_mod_n(n, square, p_set, exponent_vector):
 
-def gcd(a,b):
-    return gcd(b,a%b) if a%b else b
+def roots_congruent_mod_n(n, square, p_set, exponent_vector):
+    pass
+
+
+def gcd(a, b):
+    return gcd(b, a % b) if a % b else b
+
 
 def factor(n, x, y):
     # TODO - return gcd(x-y, n) and n/gcd(x-y,n)
-    return [0,0]
+    return [0, 0]
+
 
 def main():
     if len(sys.argv) < 2:
@@ -176,10 +185,11 @@ def main():
 # if __name__ == "__main__":
 #    main()
 
-#testing with n
+
+# testing with n
 n = 1127239
 B = int(math.exp((2**(-0.5)*(math.log(2*n)*math.log(math.log(2*n)))**0.5)))
 print(B)
 print(pi(B))
 
-sieve_quad_poly(n,B)
+sieve_quad_poly(n, B)
