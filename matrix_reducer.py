@@ -1,5 +1,6 @@
 # Only one public function, call using find_dependencies(matrix)
 from itertools import chain
+import numpy as np
 
 
 def mod_2_representation(mat):
@@ -51,8 +52,18 @@ def get_solution_rows(mat, marks):
                     soln.append(i)
             soln.append(index)
             solutions.append(soln)
-    return solutions
+    if solutions:
+        ret = []
+        for soln in solutions:
+            row = np.zeros(mat.shape[0])
+            for i in soln:
+                row[i] = 1
+            ret.append(row)
+        return np.array(ret)
+    else:
+        return []
 
+# def aggregate_solutions(mat, solution_indices)
 
 def find_dependencies(mat):
     """
@@ -61,5 +72,4 @@ def find_dependencies(mat):
     """
     mat = mod_2_representation(mat).transpose()
     mat, marks = eliminate(mat)
-    solutions = get_solution_rows(mat, marks)
-
+    return get_solution_rows(mat, marks)

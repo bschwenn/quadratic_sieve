@@ -27,4 +27,4 @@ class MatrixTestCase(unittest.TestCase):
         r1 = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 0, 1]])
         marks = [True, True, False, True]
         ret = get_solution_rows(r1, marks)
-        self.assertListEqual(ret, [[0, 1, 2]])
+        self.assertListEqual(ret.ravel().tolist(), [1, 1, 1, 0])
