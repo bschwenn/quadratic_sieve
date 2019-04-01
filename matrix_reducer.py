@@ -58,16 +58,13 @@ def get_solution_rows(mat, marks):
                     soln.append(i)
             soln.append(index)
             solutions.append(soln)
-    if solutions:
-        ret = []
-        for soln in solutions:
-            row = np.zeros(mat.shape[0])
-            for i in soln:
-                row[i] = 1
-            ret.append(row)
-        return np.array(ret)
-    else:
-        return []
+    ret = []
+    for soln in solutions:
+        row = np.zeros(mat.shape[0])
+        for i in soln:
+            row[i] = 1
+        ret.append(row)
+    return np.array(ret)
 
 def find_dependencies(mat):
     """
