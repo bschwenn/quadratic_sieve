@@ -66,6 +66,7 @@ def get_solution_rows(mat, marks):
         ret.append(row)
     return np.array(ret)
 
+
 def find_dependencies(mat):
     """
     :param mat: 2d np array where each row is the exponent vector of the prime factorization.

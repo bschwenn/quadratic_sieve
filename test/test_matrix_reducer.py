@@ -2,6 +2,7 @@ from matrix_reducer import *
 import unittest
 import numpy as np
 
+
 class MatrixTestCase(unittest.TestCase):
 
     def test_add_mod_2(self):
