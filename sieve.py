@@ -50,7 +50,7 @@ def sieve_quad_poly(n,B): #n should be odd
 
     x_start = int(math.ceil(n**0.5)) #bounds of sieve
     top_bound = 2 * x_start #bounds of sieve
-    print(x_start)
+    #print(x_start)
     print(top_bound)
     p_set = sieve_era(B)
     expfac=[ [0]*len(p_set) for i in range(x_start, top_bound)] #exponent vector
@@ -98,7 +98,7 @@ def sieve_quad_poly_log(n,p_set, B): #n should be odd
 
 #    b_smooth_list = []
     for p in p_set:
-        print(p)
+        #print(p)
         sols = get_sol(n,p) # solutions x for x^2-n=0 mod p
 
         if p == 2: # solutions to x^2-n = 0 mod 2: if n is even, x = 0 mod 2, if n is odd, x = 1 mod 2
@@ -111,14 +111,16 @@ def sieve_quad_poly_log(n,p_set, B): #n should be odd
                     k += 1
 
                 if (l[x-x_start]<0.1):
-                    # b_smooth_list.append(orig[j-x_start])
-                    yield x
+                    # b_smooth_list.append(oreig[j-x_start])
+                    print(str(x) + " " + str(orig[x-x_start]))
+                    yield (x, orig[x-x_start])
                     # print(orig[j-x_start])
                 #if len(b_smooth_list)>pi(B):
                     # return b_smooth_list
 
         elif len(sols) == 1:  # p | n
-            yield p
+            print(str(p) + " " + str(orig[x-x_start]))
+            yield (p, None)
         elif len(sols) == 2:  # two solutions, sieve
 
             for x in range(sols[0]+p*math.ceil((x_start-sols[0])/p), top_bound, p):
@@ -129,7 +131,8 @@ def sieve_quad_poly_log(n,p_set, B): #n should be odd
                     k += 1
                 if l[num] < 0.1:
                     #b_smooth_list.append(orig[num])
-                    yield x
+                    print(str(x) + " " + str(orig[x-x_start]))
+                    yield (x, orig[x-x_start])
                     #print(orig[num])
                 #if len(b_smooth_list) > pi(B):
                 #    return b_smooth_list
@@ -142,8 +145,8 @@ def sieve_quad_poly_log(n,p_set, B): #n should be odd
                     k += 1
                 if l[num] < 0.1:
                     #b_smooth_list.append(orig[num])
-                    yield x
-                    print(orig[num])
+                    yield (x, orig[x-x_start])
+                    #print(orig[num])
                 #if len(b_smooth_list) > pi(B):
                 #    return b_smooth_list
 

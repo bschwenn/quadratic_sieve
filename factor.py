@@ -8,13 +8,14 @@ def factor(n):
     pi_B = len(factor_base)
     factors = set()
 
-    for square in sieve_quad_poly_log(n, factor_base, B):
-        if (n % square == 0):
-            factors.add(square)
+    for (x,smooth_square) in sieve_quad_poly_log(n, factor_base, B):
+        print(x, smooth_square)
+        if (smooth_square == None):
+            factors.add(x)
             continue
-        print("Square:" + str(square))
-        smooth_squares_factor_map[square] = factor_in_base(square, factor_base)
-        print(str(square) + " " + str(smooth_squares_factor_map[square]))
+#        print("Square:" + str(smooth_square))
+        smooth_squares_factor_map[x] = factor_in_base(smooth_square, factor_base)
+        print(str(smooth_square) + " " + str(smooth_squares_factor_map[square]))
 
         if len(smooth_squares_factor_map) > pi_B:
             left_nullspace_mat = find_dependencies([v for k,v in smooth_squares_factor_map])
