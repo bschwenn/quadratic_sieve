@@ -57,10 +57,10 @@ def get_solution_rows(mat, marks):
             for i, num in enumerate(mat[index]):
                 if num == 1:
                     for idx, row in enumerate(mat):
-                        if row[i] == 1:
+                        if row[i] == 1 and marks[index]:
                             soln.append(idx)
                     # soln.append(i)
-            # soln.append(index)
+            soln.append(index)
             solutions.append(soln)
     ret = []
     for soln in solutions:

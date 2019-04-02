@@ -20,8 +20,12 @@ def factor(n):
         #print(str(smooth_square) + " " + str(smooth_squares_factor_map[x]))
 
         if len(smooth_squares_factor_map) > pi_B:
-            print([v for k,v in smooth_squares_factor_map.items()])
-            left_nullspace_mat = find_dependencies(numpy.array([v for k,v in smooth_squares_factor_map.items()]))
+            # print([v for k,v in smooth_squares_factor_map.items()])
+            x = [v for k, v in smooth_squares_factor_map.items()]
+            left_nullspace_mat = find_dependencies(numpy.array(x))
+            print(left_nullspace_mat)
+            # print(np.matmul(left_nullspace_mat, numpy.array(x)))
+
             new_factors = check_for_factors(n, smooth_squares_factor_map, left_nullspace_mat, factor_base)
             print("New factors: ", new_factors)
             factors |= new_factors
@@ -43,7 +47,6 @@ def factor(n):
 def check_for_factors(n, smooth_squares_factor_map, left_nullspace_mat, factor_base):
     roots_of_squares = list(smooth_squares_factor_map.keys())
     factors = set()
-
     for row in left_nullspace_mat:
         prod_of_roots = 1
         prod_of_factors = 1
