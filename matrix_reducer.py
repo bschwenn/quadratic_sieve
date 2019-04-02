@@ -26,7 +26,8 @@ def add_mod_2(r1, r2):
 
 def eliminate(mat):
     """
-    returns RREF of mat after gaussian elim, given mat is a mod 2 matrix
+    returns RREF of mat after gaussian elim, given mat is a mod 2 matrix. Also returns boolean list of
+    independent/dependent rows.
     """
     mat = mat.transpose()  # transposing so we can work on rows and then transpose at the end
     marks = [False] * mat.shape[1]
