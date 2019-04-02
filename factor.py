@@ -24,11 +24,11 @@ def factor(n):
             for x in x_vector:
                 factor_matrix.append(smooth_squares_factor_map[x])
 
-
-            print(numpy.array(factor_matrix))
+            #print(numpy.array(factor_matrix))
+            # print(numpy.array(factor_matrix))
             left_nullspace_mat = find_dependencies(numpy.array(factor_matrix))
-            print(numpy.array(factor_matrix))
-            print(left_nullspace_mat)
+            # print(numpy.array(factor_matrix))
+            #print(left_nullspace_mat)
             new_factors = check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_base)
             factors |= new_factors
 
@@ -48,14 +48,22 @@ def factor(n):
 def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_base):
     factors = set()
 
-    print("Product")
-    print(numpy.matmul(left_nullspace_mat, factor_matrix))
+    #print("Product")
+    #print(numpy.matmul(left_nullspace_mat, factor_matrix))
     for idx,row in enumerate(left_nullspace_mat):
+        #print("Dependency")
+        #print(row)
+        sum_vec = numpy.array([ 0 for i in range(len(factor_base)) ] )
+        for i, val in enumerate(row):
+            if val == 1:
+                #print(sum_vec)
+                sum_vec += numpy.array(factor_matrix[i])
+        #print("Sum vec:", sum_vec)
         prod_of_roots = 1
         prod_of_factors = 1
         combined_exponent_vector = [ 0 for i in range(len(factor_base)) ]
-        print(left_nullspace_mat)
-        print(x_vector)
+        #print(left_nullspace_mat)
+        #print(x_vector)
         for i in range(len(row)):
             if row[i] == 1:
                 square_root = x_vector[i]
@@ -64,18 +72,17 @@ def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_bas
 
                 for j in range(len(exponent_vector)):
                     #prod_of_factors *= pow(factor_base[j], exponent_vector[j], n)
-                    if j == 5:
-                        print("Here: ", exponent_vector[j], i, j, idx)
+                    #if j == 5:
+                    #    print("Here: ", exponent_vector[j], i, j, idx)
                     combined_exponent_vector[j] += exponent_vector[j]
 
         for j in range(len(combined_exponent_vector)):
-            print(combined_exponent_vector[j])
-            # assert (combined_exponent_vector[j] % 2 == 0)
+            assert (combined_exponent_vector[j] % 2 == 0)
             prod_of_factors *= pow(factor_base[j], int(combined_exponent_vector[j]/2), n)
 
         prod_roots_residue = prod_of_roots % n
-        prod_factors_residue = int(prod_of_factors**0.5) % n
-        print("x: ", prod_roots_residue, " y: ", prod_factors_residue)
+        prod_factors_residue = prod_of_factors
+        #print("x: ", prod_roots_residue, " y: ", prod_factors_residue)
         if prod_roots_residue != prod_factors_residue and prod_roots_residue != (prod_factors_residue - n):
             factors.add(gcd(prod_roots_residue-prod_factors_residue, n))
 
@@ -101,8 +108,8 @@ def is_fully_factored(n, factors):
     else:
         return False
 
-
 def is_prime(n):
+    return True
     m = n - 1
     k = 0
     while m % 2 == 0:

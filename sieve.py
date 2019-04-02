@@ -88,8 +88,7 @@ def sieve_quad_poly(n,B): #n should be odd
 def sieve_quad_poly_log(n, p_set, B): #n should be odd
     x_start = int(math.ceil(n**0.5))  # bounds of sieve
 #    top_bound = math.ceil(1.005 * x_start)  # bounds of sieve
-    top_bound = int(math.ceil(n**0.5))+32*B
-    print("Prime base: ", B)
+    top_bound = int(math.ceil(n**0.5))+16*B
 
     # p_set = sieve_era(B)
     orig = [i*i-n for i in range(x_start, top_bound)]  # preserved list
@@ -97,7 +96,6 @@ def sieve_quad_poly_log(n, p_set, B): #n should be odd
 
 #    b_smooth_list = []
     for p in p_set:
-        print(p)
         sols = get_sol(n,p) # solutions x for x^2-n=0 mod p
 
         if p == 2: # solutions to x^2-n = 0 mod 2: if n is even, x = 0 mod 2, if n is odd, x = 1 mod 2
