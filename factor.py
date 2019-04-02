@@ -27,6 +27,7 @@ def factor(n):
 
             print(numpy.array(factor_matrix))
             left_nullspace_mat = find_dependencies(numpy.array(factor_matrix))
+            print(numpy.array(factor_matrix))
             print(left_nullspace_mat)
             new_factors = check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_base)
             factors |= new_factors
@@ -47,6 +48,7 @@ def factor(n):
 def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_base):
     factors = set()
 
+    print("Product")
     print(numpy.matmul(left_nullspace_mat, factor_matrix))
     for idx,row in enumerate(left_nullspace_mat):
         prod_of_roots = 1
@@ -99,8 +101,26 @@ def is_fully_factored(n, factors):
     else:
         return False
 
-def is_prime(m):
-    return True # TODO - Miller Rabine
+
+def is_prime(n):
+    m = n - 1
+    k = 0
+    while m % 2 == 0:
+        k += 1
+        m = m / 2
+    a = 2
+    a = (a ** m) % n
+    if a == 1 or a == n - 1:
+        return True
+    while k > 1:
+        a = (a ** 2) % n
+        if a == 1:
+            return False
+        if a == n - 1:
+            return True
+    if a == n - 1:
+        return True
+    return False
 
 def main():
     if len(sys.argv) < 2:
