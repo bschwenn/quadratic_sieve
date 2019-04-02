@@ -62,7 +62,7 @@ def get_solution_rows(mat, marks):
         if solution:
             solution.append(free_row_index)
             solutions.append([1 if i in solution else 0 for i in range(mat.shape[0])])
-        return solutions
+    return solutions
 
 
 
