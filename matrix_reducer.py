@@ -56,8 +56,11 @@ def get_solution_rows(mat, marks):
             soln = []
             for i, num in enumerate(mat[index]):
                 if num == 1:
-                    soln.append(i)
-            soln.append(index)
+                    for idx, row in enumerate(mat):
+                        if row[i] == 1:
+                            soln.append(idx)
+                    # soln.append(i)
+            # soln.append(index)
             solutions.append(soln)
     ret = []
     for soln in solutions:
@@ -73,6 +76,6 @@ def find_dependencies(mat):
     :param mat: 2d np array where each row is the exponent vector of the prime factorization.
     :return: ret: 2d np array where each row is a vector in the mod 2 left nullspace of mat.
     """
-    mat = mod_2_representation(mat).transpose()
-    mat, marks = eliminate(mat)
-    return get_solution_rows(mat, marks)
+    ret = mod_2_representation(mat).transpose()
+    ret, marks = eliminate(ret)
+    return get_solution_rows(ret, marks)
