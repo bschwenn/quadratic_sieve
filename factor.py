@@ -23,7 +23,7 @@ def factor(n):
             # print([v for k,v in smooth_squares_factor_map.items()])
             x = [v for k, v in smooth_squares_factor_map.items()]
             left_nullspace_mat = find_dependencies(numpy.array(x))
-            print(left_nullspace_mat)
+            # print(left_nullspace_mat)
             # print(np.matmul(left_nullspace_mat, numpy.array(x)))
 
             new_factors = check_for_factors(n, smooth_squares_factor_map, left_nullspace_mat, factor_base)
@@ -85,26 +85,26 @@ def is_fully_factored(n, factors):
     else:
         return False
 
-
+#
 def is_prime(n):
-    m = n - 1
-    k = 0
-    while m % 2 == 0:
-        k += 1
-        m = m / 2
-    a = 2
-    a = (a ** m) % n
-    if a == 1 or a == n - 1:
-        return True
-    while k > 1:
-        a = (a ** 2) % n
-        if a == 1:
-            return False
-        if a == n - 1:
-            return True
-    if a == n - 1:
-        return True
-    return False
+    # m = n - 1
+    # k = 0
+    # while m % 2 == 0:
+    #     k += 1
+    #     m = m // 2
+    # a = 2
+    # a = pow(a, m, n)
+    # if a == 1 or a == n - 1:
+    #     return True
+    # while k > 1:
+    #     a = pow(a, m, n)
+    #     if a == 1:
+    #         return False
+    #     if a == n - 1:
+    #         return True
+    # if a == n - 1:
+    #     return True
+    return True
 
 def main():
     if len(sys.argv) < 2:

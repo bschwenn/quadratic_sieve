@@ -42,7 +42,6 @@ def eliminate(mat):
     mat = mat.transpose()
     return mat, marks
 
-
 def get_solution_rows(mat, marks):
     """
 
@@ -50,25 +49,22 @@ def get_solution_rows(mat, marks):
     :param marks:
     :return: left nullspace of mat mod 2
     """
+    free_row_indices = [idx for idx,truth in enumerate(marks) if not truth]
     solutions = []
-    for index, mark in enumerate(marks):
-        if not mark:  # found a row s.t. mark is False, i.e. a dependent row.
-            soln = []
-            for i, num in enumerate(mat[index]):
-                if num == 1:
-                    for idx, row in enumerate(mat):
-                        if row[i] == 1 and marks[index]:
-                            soln.append(idx)
-                    # soln.append(i)
-            soln.append(index)
-            solutions.append(soln)
-    ret = []
-    for soln in solutions:
-        row = np.zeros(mat.shape[1])
-        for i in soln:
-            row[i] = 1
-        ret.append(row)
-    return np.array(ret)
+    for free_row_index in free_row_indices:
+        solution = []
+        one_columns = [index for index, value in enumerate(mat[free_row_index]) if mat[free_row_index][index] == 1]
+        for row_index, row in enumerate(mat):
+            for column_index in one_columns:
+                if row[column_index] == 1 and marks[row_index]:
+                    solution.append(row_index)
+                    break
+        if solution:
+            solution.append(free_row_index)
+            solutions.append([1 if i in solution else 0 for i in range(mat.shape[0])])
+        return solutions
+
+
 
 
 def find_dependencies(mat):
