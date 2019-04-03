@@ -21,10 +21,10 @@ def factor(n):
             continue
 
         factor_map = factor_in_base_map(smooth_square, factor_base)
-        smooth_squares_factor_map[x] = factor_map # factor_in_base(smooth_square, factor_base)
+        smooth_squares_factor_map[x] = factor_map
         used_primes |= factor_map.keys()
 
-        if len(smooth_squares_factor_map) > len(used_primes): # pi_B:
+        if len(smooth_squares_factor_map) > len(used_primes):
             x_vector = list(smooth_squares_factor_map.keys())
             factor_matrix = []
             sorted_base = sorted(list(used_primes))
@@ -36,14 +36,18 @@ def factor(n):
             left_nullspace_mat = find_dependencies(numpy.array(factor_matrix))
             print("Found {} dependencies in {} seconds".format(len(left_nullspace_mat), time.time()-start))
 
-            new_factors = check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, sorted_base) # factor_base)
+            new_factors = check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, sorted_base)
+
+            # Find more b-smooth numbers if we didn't get any useful dependencies
             if not new_factors:
                 continue
 
             factors |= new_factors
-
             result = is_fully_factored(n, factors)
 
+            # If result returns an int it is the (probably, by Miller-Rabine) prime
+            # result of dividing n by all the already found factors, i.e., its
+            # the last factor
             if type(result) == int:
                 factors.add(result)
                 return factors
@@ -51,53 +55,43 @@ def factor(n):
                 return factors
 
             # might need to remove stuff from the map instead of just adding more
+            # Update: this seems to work fine... it can just only add one dependency at a time though... we should probably add a check to avoid retesting dependencies
 
     return factors
 
 def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_base):
     factors = set()
 
-    #print("Product")
     for idx,row in enumerate(left_nullspace_mat):
-        #print("Dependency")
-        #print(row)
         sum_vec = numpy.array([ 0 for i in range(len(factor_base)) ] )
+
         for i, val in enumerate(row):
             if val == 1:
-                #print(sum_vec)
                 sum_vec += numpy.array(factor_matrix[i])
-        #print("Sum vec:", sum_vec)
         prod_of_roots = 1
         prod_of_factors = 1
         combined_exponent_vector = [ 0 for i in range(len(factor_base)) ]
-        #print(left_nullspace_mat)
-        #print(x_vector)
+
         for i in range(len(row)):
             if row[i] == 1:
                 square_root = x_vector[i]
-                #print("Using x_{}={} (as in the polynomial sequence)".format(i, square_root))
                 prod_of_roots = (prod_of_roots * square_root) % n
                 exponent_vector = factor_matrix[i]
 
                 for j in range(len(exponent_vector)):
-                    #prod_of_factors *= pow(factor_base[j], exponent_vector[j], n)
-                    #if j == 5:
-                    #    print("Here: ", exponent_vector[j], i, j, idx)
                     combined_exponent_vector[j] += exponent_vector[j]
-                    #print("x_i has factor {}^{}".format(factor_base[j], exponent_vector[j]))
 
         for j in range(len(combined_exponent_vector)):
             assert (combined_exponent_vector[j] % 2 == 0)
             prod_of_factors = (prod_of_factors * pow(factor_base[j], int(combined_exponent_vector[j]/2))) % n
 
-        prod_roots_residue = prod_of_roots
-        prod_factors_residue = prod_of_factors
-        print("Testing equal squares x = {}, y = {}...".format(prod_roots_residue, prod_factors_residue))
-        if prod_roots_residue != prod_factors_residue and prod_roots_residue != (prod_factors_residue - n):
+        print("Testing equal squares x = {}, y = {}...".format(prod_of_roots, prod_of_factors))
+        if prod_of_roots != prod_of_factors and prod_of_roots != (prod_of_factors - n):
             print("... sanity check: x^2={}, y^2={}".format(pow(prod_of_roots,2,n),pow(prod_of_factors,2,n)))
-            gcd_xy = gcd(prod_roots_residue-prod_factors_residue,n)
+            gcd_xy = gcd(prod_of_roots-prod_of_factors,n)
             print("... the gcd is {}".format(gcd_xy))
 
+            # This should not happen, should prob just make it an assertion
             if gcd_xy == 1 or gcd_xy == n:
                 continue
 
@@ -154,5 +148,6 @@ def main():
     n = int(sys.argv[1])
     print("The factors of", n, "are", factor(n))
     return 0
+
 if __name__ == "__main__":
    main()
