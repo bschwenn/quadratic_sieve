@@ -36,7 +36,6 @@ def eliminate(mat):
 
 def get_solution_rows(mat, marks):
     """
-
     :param mat:
     :param marks:
     :return: left nullspace of mat mod 2
@@ -66,14 +65,5 @@ def find_dependencies(mat):
     :return: ret: 2d np array where each row is a vector in the mod 2 left nullspace of mat.
     """
     ret = mod_2_representation(mat)
-    #print(np.array(reduce_empties(ret)).shape)
-    #ret2 = np.array(reduce_empties(ret))
-    #ret2, marks = eliminate(ret)
-    #return get_solution_rows(ret2,marks)
-    #print("Mod 2 rep: \n", ret)
     ret, marks = eliminate(ret)
-    #print(ret)
-    #print("Marks")
-    #print(marks)
-    #print(get_solution_rows(ret,marks))
     return get_solution_rows(ret, marks)
