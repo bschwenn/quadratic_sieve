@@ -1,6 +1,6 @@
 import math
 import sys
-
+from collections import defaultdict
 
 def sieve_era(B): # returns primes <= b
     l = [True] * (B+1)
@@ -162,6 +162,18 @@ def factor_in_base(n,p_set): # return exponent vector for n, w/ primes up to B t
         ans.append(count)
     return ans
 
+def factor_in_base_map(n, p_set):
+    ans = defaultdict(lambda: 0)
+    for i in p_set:
+        count = 0
+        exp = 1
+        while n % i**exp == 0: # n % i == 0:
+            #n /= i
+            #count += 1
+            exp += 1
+        if exp-1 != 0:
+            ans[i] = exp-1
+    return ans
 
 def roots_congruent_mod_n(n, square, p_set, exponent_vector):
     pass
