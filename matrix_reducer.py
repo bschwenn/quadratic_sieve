@@ -64,6 +64,7 @@ def find_dependencies(mat):
     :param mat: 2d np array where each row is the exponent vector of the prime factorization.
     :return: ret: 2d np array where each row is a vector in the mod 2 left nullspace of mat.
     """
+    # print(mat)
     ret = mod_2_representation(mat)
     ret, marks = eliminate(ret)
     return get_solution_rows(ret, marks)

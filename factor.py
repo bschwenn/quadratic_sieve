@@ -15,15 +15,18 @@ def factor(n):
     used_primes = set()
 
     for (x,smooth_square) in sieve_quad_poly_log(n, factor_base, B):
-        #print("Found smooth square {} with x={}".format(smooth_square, x))
+        # print("Found smooth square {} with x={}".format(smooth_square, x))
         if (smooth_square == None):
+            # print("HEY THERE MAMA")
             factors.add(x)
             continue
 
         factor_map = factor_in_base_map(smooth_square, factor_base)
+
         smooth_squares_factor_map[x] = factor_map
         used_primes |= factor_map.keys()
-
+        # print("length of smooth_squares_factor_map:", len(smooth_squares_factor_map))
+        # print("length of  used_primes:", len(used_primes))
         if len(smooth_squares_factor_map) > len(used_primes):
             x_vector = list(smooth_squares_factor_map.keys())
             factor_matrix = []
@@ -34,6 +37,7 @@ def factor(n):
 
             start = time.time()
             left_nullspace_mat = find_dependencies(numpy.array(factor_matrix))
+            # print(left_nullspace_mat)
             print("Found {} dependencies in {} seconds".format(len(left_nullspace_mat), time.time()-start))
 
             new_factors = check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, sorted_base)
@@ -56,10 +60,11 @@ def factor(n):
 
             # might need to remove stuff from the map instead of just adding more
             # Update: this seems to work fine... it can just only add one dependency at a time though... we should probably add a check to avoid retesting dependencies
-
+    # print("factors", factors)
     return factors
 
 def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_base):
+    # print("here")
     factors = set()
 
     for idx,row in enumerate(left_nullspace_mat):
@@ -124,7 +129,8 @@ def is_prime(n):
     k = 0
     while m % 2 == 0:
         k += 1
-        m = m / 2
+        # m = m // 2
+        m//=2
     a = 2
     a = pow(a, m, n)
     if a == 1 or a == n - 1:
