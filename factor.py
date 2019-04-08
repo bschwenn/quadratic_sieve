@@ -23,15 +23,18 @@ def factor(n):
     gcd_cache = set()
 
     for (x,smooth_square) in sieve_quad_poly_log(n, factor_base, B):
-        #print("Found smooth square {} with x={}".format(smooth_square, x))
+        # print("Found smooth square {} with x={}".format(smooth_square, x))
         if (smooth_square == None):
+            # print("HEY THERE MAMA")
             factors.add(x)
             continue
 
         factor_map = factor_in_base_map(smooth_square, factor_base)
+
         smooth_squares_factor_map[x] = factor_map
         used_primes |= factor_map.keys()
-
+        # print("length of smooth_squares_factor_map:", len(smooth_squares_factor_map))
+        # print("length of  used_primes:", len(used_primes))
         if len(smooth_squares_factor_map) > len(used_primes):
             x_vector = list(smooth_squares_factor_map.keys())
             factor_matrix = []

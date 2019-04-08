@@ -1,3 +1,4 @@
+
 import math
 import sys
 from collections import defaultdict
@@ -33,12 +34,70 @@ def sieve_quad(n,B): #return B-smooth numbers up to n, with the exponent factori
 def pi(B):
     return len(sieve_era(B))-1
 
-def get_sol(n,p): #gets solutions to x^2-n = 0 mod p
-    sol = []
-    for i in range(p):
-        if (((i*i)-n) % p == 0):
-            sol.append(i)
-    return sol
+# def get_sol(n,p): #gets solutions to x^2-n = 0 mod p
+#     sol = []
+#     for i in range(p):
+#         if (((i*i)-n) % p == 0):
+#             sol.append(i)
+#     # print(sol)
+#     return sol
+
+def has_sq_root(a, p):
+    """
+    Computes a^((p-1)/2) and returns 1 or -1 depending on if a has a square root mod p
+    """
+    x  = pow(a, (p - 1) // 2, p)
+    return -1 if x == p - 1 else 1
+
+
+def get_sol(n, p):
+    # Algo got from wikipedia, just translated their algo into code
+    # First deal w special cases
+    if has_sq_root(n, p) != 1:
+        return []
+    elif n == 0:
+        return []
+    elif p == 2:
+        return []
+    elif p % 4 == 3:
+        soln = pow(n, (p + 1) // 4, p)
+        return [soln, p-soln] 
+
+    # Now the real algorithm
+    # first write p-1 as q*2^s with q odd
+    m, q = 0, p-1
+    while(q % 2 == 0):
+        q//=2
+        m+=1
+    z = 2
+
+    # searching for z which is a quadratic non-residue
+    while has_sq_root(z, p) != -1:
+        z += 1    
+
+    c = pow(z, q, p)
+    t = pow(n, q, p)
+    r = pow(n, (q+1)//2, p)
+
+    while True:
+        i = 0
+        while i < m-1:
+            if t == 1:
+                break
+            t = pow(t, 2, p)
+            i += 1
+        if i == 0:
+            return [r, p-r]
+
+        b = pow(c, pow(2, m-i-1, p-1), p)
+        m = i
+        c = pow(b, 2, p)
+        t = (t*c) % p 
+        r = (r*b) % p 
+
+
+
+
 '''
 def sieve_quad_poly(n,B): #n should be odd
     """examine numbers x^2-n for B-Smooth values, x runs integers from ceil(sqrt(n))
@@ -86,7 +145,7 @@ def sieve_quad_poly(n,B): #n should be odd
 '''
 
 def sieve_quad_poly_log(n, p_set, B): #n should be odd
-    x_start = int(math.ceil(n**0.5))  # bounds of sieve
+    x_start = int(math.ceil(n**0.5))+1  # bounds of sieve
 #    top_bound = math.ceil(1.005 * x_start)  # bounds of sieve
     top_bound = int(math.ceil(n**0.5))+16*B
 
@@ -181,28 +240,6 @@ def roots_congruent_mod_n(n, square, p_set, exponent_vector):
 
 def gcd(a, b):
     return gcd(b, a % b) if a % b else b
-
-
-def miller_rabin(n):
-    m = n-1
-    k = 0
-    while m % 2 == 0:
-        k += 1
-        m = m / 2
-    a = 2
-    a = (a ** m) % n
-    if a == 1 or a == n-1:
-        return True
-    while k > 1:
-        a = (a ** 2) % n
-        if a == 1:
-            return False
-        if a == n - 1:
-            return True
-    if a == n - 1:
-        return True
-    return False
-
 
 def factor(n, x, y):
     # TODO - return gcd(x-y, n) and n/gcd(x-y,n)
