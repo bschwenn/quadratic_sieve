@@ -19,7 +19,7 @@ def factor_raw(n):
         return factor_by_division(n)
 
     # If n is perfect square of primes need to know in advance, sieve won't work otherwise
-    if math.floor(math.sqrt(n)) == math.sqrt(n):
+    if math.floor(math.sqrt(n)) == math.sqrt(n) and is_prime(int(math.sqrt(n))):
         return set([int(math.sqrt(n))])
 
     B = find_bound(n)
@@ -72,7 +72,6 @@ def process_factor(factor, factors):
         if is_prime(factor):
             factors.add(factor)
         else:
-            print("Gonna factor {}".format(factor))
             factors |= factor_raw(factor)
 
 # Format the factors in a pretty format, e.g., remove 29^2 if 29^3 is a factor
