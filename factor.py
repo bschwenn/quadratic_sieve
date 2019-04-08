@@ -10,7 +10,10 @@ TRIAL_DIVISION_CUTOFF = 100000
 SMALL_PRIMES = sieve_era(1000)
 
 def factor(n):
-    print("Attempting to factor {}...".format(n))
+    return prettify(n, factor_raw(n))
+
+def factor_raw(n, gcd_cache = set()):
+    ##print("Attempting to factor {}...".format(n))
     if n < TRIAL_DIVISION_CUTOFF:
         return factor_by_division(n)
 
@@ -20,12 +23,11 @@ def factor(n):
     pi_B = len(factor_base)
     factors = set()
     used_primes = set()
-    gcd_cache = set()
 
     for (x,smooth_square) in sieve_quad_poly_log(n, factor_base, B):
-        # print("Found smooth square {} with x={}".format(smooth_square, x))
+        # ##print("Found smooth square {} with x={}".format(smooth_square, x))
         if (smooth_square == None):
-            # print("HEY THERE MAMA")
+            # ##print("HEY THERE MAMA")
             factors.add(x)
             continue
 
@@ -33,8 +35,8 @@ def factor(n):
 
         smooth_squares_factor_map[x] = factor_map
         used_primes |= factor_map.keys()
-        # print("length of smooth_squares_factor_map:", len(smooth_squares_factor_map))
-        # print("length of  used_primes:", len(used_primes))
+        # ##print("length of smooth_squares_factor_map:", len(smooth_squares_factor_map))
+        # ##print("length of  used_primes:", len(used_primes))
         if len(smooth_squares_factor_map) > len(used_primes):
             x_vector = list(smooth_squares_factor_map.keys())
             factor_matrix = []
@@ -45,7 +47,7 @@ def factor(n):
 
             start = time.time()
             left_nullspace_mat = find_dependencies(numpy.array(factor_matrix))
-            # print("Found {} dependencies in {} seconds".format(len(left_nullspace_mat), time.time()-start))
+            # ##print("Found {} dependencies in {} seconds".format(len(left_nullspace_mat), time.time()-start))
 
             new_factors = check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, sorted_base, gcd_cache)
 
@@ -54,6 +56,7 @@ def factor(n):
                 continue
 
             factors |= new_factors
+            #print(factors)
             result = is_fully_factored(n, factors)
 
             # If result returns an int it is the (probably, by Miller-Rabine) prime
@@ -61,13 +64,13 @@ def factor(n):
             # the last factor
             if type(result) == int:
                 factors.add(result)
-                return prettify(n, factors)
+                return factors
             elif result:
-                return prettify(n, factors)
+                return factors
 
             # might need to remove stuff from the map instead of just adding more
             # Update: this seems to work fine... it can just only add one dependency at a time though... we should probably add a check to avoid retesting dependencies
-    return prettify(n, factors)
+    return factors
 
 def prettify(n, factors):
     result = []
@@ -93,10 +96,18 @@ def prettify(n, factors):
     return result
 
 def factor_by_division(n):
-    primes = sieve_era(math.floor(math.sqrt(n)))
+    if n == 1:
+        return [1]
+    if n == 2:
+        return [2]
+    if n == 3:
+        return [3]
+
+    primes = sieve_era(math.ceil(math.sqrt(n)))
     factors = set()
 
     for prime in primes:
+        #print(n, prime)
         k = 1
 
         while n % (prime**k) == 0:
@@ -105,6 +116,7 @@ def factor_by_division(n):
         if k > 1:
             factors.add(prime**(k-1))
 
+    #print(factors)
     return factors
 
 def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_base, cache):
@@ -133,11 +145,11 @@ def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_bas
             assert (combined_exponent_vector[j] % 2 == 0)
             prod_of_factors = (prod_of_factors * pow(factor_base[j], int(combined_exponent_vector[j]/2))) % n
 
-        # print("Testing equal squares x = {}, y = {}...".format(prod_of_roots, prod_of_factors))
+        # ##print("Testing equal squares x = {}, y = {}...".format(prod_of_roots, prod_of_factors))
         if prod_of_roots != prod_of_factors and prod_of_roots != ((prod_of_factors - n) % n):
-            # print("... sanity check: x^2={}, y^2={}".format(pow(prod_of_roots,2,n),pow(prod_of_factors,2,n)))
+            # ##print("... sanity check: x^2={}, y^2={}".format(pow(prod_of_roots,2,n),pow(prod_of_factors,2,n)))
             gcd_xy = gcd(prod_of_roots-prod_of_factors,n)
-            # print("... the gcd is {}".format(gcd_xy))
+            #print("... the gcd is {}".format(gcd_xy))
 
             if gcd_xy == 1 or gcd_xy == n or gcd_xy in cache:
                 continue
@@ -150,6 +162,10 @@ def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_bas
 
             if is_prime(gcd_xy):
                 factors.add(gcd_xy)
+                #print(factors)
+            else:
+                #print("Recursing on {}".format(gcd_xy))
+                factors |= factor_raw(gcd_xy, cache)
 
     return factors
 
@@ -215,7 +231,7 @@ def is_prime(n):
 
 def main():
     if len(sys.argv) < 2:
-        print("You need to input a number to factor!")
+        ##print("You need to input a number to factor!")
         return 1
 
     n = int(sys.argv[1])
