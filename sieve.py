@@ -1,3 +1,4 @@
+
 import math
 import sys
 from collections import defaultdict
@@ -144,7 +145,7 @@ def sieve_quad_poly(n,B): #n should be odd
 '''
 
 def sieve_quad_poly_log(n, p_set, B): #n should be odd
-    x_start = int(math.ceil(n**0.5))  # bounds of sieve
+    x_start = int(math.ceil(n**0.5))+1  # bounds of sieve
 #    top_bound = math.ceil(1.005 * x_start)  # bounds of sieve
     top_bound = int(math.ceil(n**0.5))+16*B
 
