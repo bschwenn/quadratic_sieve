@@ -4,15 +4,23 @@ from copy import copy,deepcopy
 import numpy
 import math
 import time
+import random
+
+TRIAL_DIVISION_CUTOFF = 100000
+SMALL_PRIMES = sieve_era(1000)
 
 def factor(n):
     print("Attempting to factor {}...".format(n))
+    if n < TRIAL_DIVISION_CUTOFF:
+        return factor_by_division(n)
+
     B = find_bound(n)
     factor_base = sieve_era(B)
     smooth_squares_factor_map = {}
     pi_B = len(factor_base)
     factors = set()
     used_primes = set()
+    gcd_cache = set()
 
     for (x,smooth_square) in sieve_quad_poly_log(n, factor_base, B):
         #print("Found smooth square {} with x={}".format(smooth_square, x))
@@ -34,9 +42,9 @@ def factor(n):
 
             start = time.time()
             left_nullspace_mat = find_dependencies(numpy.array(factor_matrix))
-            print("Found {} dependencies in {} seconds".format(len(left_nullspace_mat), time.time()-start))
+            # print("Found {} dependencies in {} seconds".format(len(left_nullspace_mat), time.time()-start))
 
-            new_factors = check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, sorted_base)
+            new_factors = check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, sorted_base, gcd_cache)
 
             # Find more b-smooth numbers if we didn't get any useful dependencies
             if not new_factors:
@@ -50,16 +58,53 @@ def factor(n):
             # the last factor
             if type(result) == int:
                 factors.add(result)
-                return factors
+                return prettify(n, factors)
             elif result:
-                return factors
+                return prettify(n, factors)
 
             # might need to remove stuff from the map instead of just adding more
             # Update: this seems to work fine... it can just only add one dependency at a time though... we should probably add a check to avoid retesting dependencies
+    return prettify(n, factors)
+
+def prettify(n, factors):
+    result = []
+
+    for factor in sorted(factors):
+        k = 1
+
+        power = factor
+        while n % power == 0:
+            if k > 1 and power in factors:
+                factors.remove(power)
+
+            k += 1
+            power = factor**k
+
+        if k == 2: # k - 1 == 1
+            result.append(factor)
+
+        else:
+            power_of_prime = factor**(k-1)
+            result.append("{}^{}".format(factor, k-1))
+
+    return result
+
+def factor_by_division(n):
+    primes = sieve_era(math.floor(math.sqrt(n)))
+    factors = set()
+
+    for prime in primes:
+        k = 1
+
+        while n % (prime**k) == 0:
+            k += 1
+
+        if k > 1:
+            factors.add(prime**(k-1))
 
     return factors
 
-def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_base):
+def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_base, cache):
     factors = set()
 
     for idx,row in enumerate(left_nullspace_mat):
@@ -85,17 +130,23 @@ def check_for_factors(n, x_vector, factor_matrix, left_nullspace_mat, factor_bas
             assert (combined_exponent_vector[j] % 2 == 0)
             prod_of_factors = (prod_of_factors * pow(factor_base[j], int(combined_exponent_vector[j]/2))) % n
 
-        print("Testing equal squares x = {}, y = {}...".format(prod_of_roots, prod_of_factors))
-        if prod_of_roots != prod_of_factors and prod_of_roots != (prod_of_factors - n):
-            print("... sanity check: x^2={}, y^2={}".format(pow(prod_of_roots,2,n),pow(prod_of_factors,2,n)))
+        # print("Testing equal squares x = {}, y = {}...".format(prod_of_roots, prod_of_factors))
+        if prod_of_roots != prod_of_factors and prod_of_roots != ((prod_of_factors - n) % n):
+            # print("... sanity check: x^2={}, y^2={}".format(pow(prod_of_roots,2,n),pow(prod_of_factors,2,n)))
             gcd_xy = gcd(prod_of_roots-prod_of_factors,n)
-            print("... the gcd is {}".format(gcd_xy))
+            # print("... the gcd is {}".format(gcd_xy))
 
-            # This should not happen, should prob just make it an assertion
-            if gcd_xy == 1 or gcd_xy == n:
+            if gcd_xy == 1 or gcd_xy == n or gcd_xy in cache:
                 continue
 
-            factors.add(gcd_xy)
+            cache.add(gcd_xy)
+            #if not is_prime(gcd_xy):
+            #    if gcd_xy not in cache.keys():
+            #        cache[gcd_xy] = factor(gcd_xy)
+            #        factors |= cache[gcd_xy]
+
+            if is_prime(gcd_xy):
+                factors.add(gcd_xy)
 
     return factors
 
@@ -112,7 +163,7 @@ def is_fully_factored(n, factors):
 
     div_by_all_f = int(div_by_all_f)
 
-    if div_by_all_f == 1:
+    if div_by_all_f <= 1:
         return True
     elif is_prime(div_by_all_f):
         return div_by_all_f
@@ -120,24 +171,43 @@ def is_fully_factored(n, factors):
         return False
 
 def is_prime(n):
-    return True
+    n = int(n)
+
+    if n in SMALL_PRIMES:
+        return True
+
+    #if n == 2:
+    #    return True
+
+    if n % 2 == 0:
+        return False
+
     m = n - 1
     k = 0
+
     while m % 2 == 0:
         k += 1
         m = m / 2
-    a = 2
-    a = (a ** m) % n
+
+    a = random.randrange(2, n-1)
+    m = int(m)
+    a = pow(a, m, n)
+
     if a == 1 or a == n - 1:
         return True
+
     while k > 1:
-        a = (a ** 2) % n
+        a = pow(a,2,n)
+        k -= 1
+
         if a == 1:
             return False
         if a == n - 1:
             return True
+
     if a == n - 1:
         return True
+
     return False
 
 def main():
