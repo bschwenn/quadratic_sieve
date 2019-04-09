@@ -22,7 +22,7 @@ def get_sol(n,p): #gets solutions to x^2-n = 0 mod p
     return sol
 
 def sieve_quad_poly_log(n, p_set, B): #n should be odd
-    x_start = int(math.ceil(n**0.5))+1  # bounds of sieve
+    x_start = int(math.ceil(n**0.5))+10  # bounds of sieve
     top_bound = int(math.ceil(n**0.5))+16*B
 
     orig = [i*i-n for i in range(x_start, top_bound)]  # preserved list
